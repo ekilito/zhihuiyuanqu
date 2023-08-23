@@ -4,7 +4,7 @@
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <!-- 用户名称 -->
-          <span class="name">黑马管理员</span>
+          <span class="name">管理员</span>
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
@@ -27,7 +27,19 @@ export default {
   methods: {
     // 退出登录
     logout() {
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      // 询问用户
+      this.$confirm('确认要退出登录吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 确认回调
+        this.$store.commit('user/clearUserInfo')
+        // 跳转到登录
+        this.$router.push('/login')
+      }).catch(() => {
+        // 取消回调，或者then有错误
+      })
     }
   }
 }

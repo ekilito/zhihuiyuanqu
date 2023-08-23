@@ -1,4 +1,8 @@
 import axios from 'axios'
+import { getToken } from './auth'
+import { Message } from 'element-ui'
+import router from '@/router'
+import store from '@/store'
 
 // 1. 通用配置
 // 2. 定制化配置
@@ -29,6 +33,12 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
+    // 添加token
+    const token = getToken()
+    if (token) {
+      // 前面是固定的写法  后面的token的拼接模式由后端来决定
+      config.headers.Authorization = token
+    }
     return config
   },
   error => {
@@ -42,6 +52,18 @@ service.interceptors.response.use(
     return response.data
   },
   error => {
+    // 错误统一处理 接口出错的时候自动执行这个回调
+    // console.dir(error.reaponse.data.msg)
+
+    // 错误类型有很多种，根据不同的错误码做不同的提示
+    // Token 401处理
+    if (error.response.status === 401) {
+      // 1. 跳转到登录
+      router.push('/login')
+      // 2. 清空用户数据
+      store.commit('user/clearUserInfo')
+    }
+    Message.error(error.response.data.msg)
     return Promise.reject(error)
   }
 )
