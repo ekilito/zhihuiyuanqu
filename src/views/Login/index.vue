@@ -41,8 +41,8 @@
             </el-input>
           </el-form-item>
 
-          <el-form-item>
-            <el-input v-model="code" placeholder="验证码">
+          <el-form-item prop="code">
+            <el-input v-model="loginForm.code" placeholder="验证码">
               <template #prefix>
                 <img src="https://img.axureshop.com/7a/4a/a8/7a4aa826e79b40d086fba67fb100e0f9/images/0登陆页/u21.png" alt="">
               </template>
@@ -75,10 +75,11 @@ export default {
   name: 'Login',
   data() {
     return {
-      code: '',
+
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        code: ''
       },
 
       remember: false,
@@ -130,7 +131,7 @@ export default {
       if (res) {
         // 补充remeber逻辑 记住我
         if (this.remember) {
-          localStorage.setItem(FORMDATA_KEY, JSON.stringify(this.loginForm))
+          localStorage.setItem(FORMDATA_KEY, JSON.stringify({ username: this.loginForm.username, password: this.loginForm.password }))
         } else {
           localStorage.removeItem(FORMDATA_KEY)
         }

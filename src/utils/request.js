@@ -53,17 +53,23 @@ service.interceptors.response.use(
   },
   error => {
     // 错误统一处理 接口出错的时候自动执行这个回调
-    // console.dir(error.reaponse.data.msg)
+    console.dir(error.reaponse)
 
     // 错误类型有很多种，根据不同的错误码做不同的提示
     // Token 401处理
     if (error.response.status === 401) {
+      Message({ type: 'warning', message: 'token超时了' })
+      // 说明token超时了
+      // 调用action中的退出登录
       // 1. 跳转到登录
       router.push('/login')
       // 2. 清空用户数据
       store.commit('user/clearUserInfo')
     }
-    Message.error(error.response.data.msg)
+    Message({
+      type: 'warning',
+      message: error.response.data.msg
+    })
     return Promise.reject(error)
   }
 )
