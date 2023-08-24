@@ -138,13 +138,16 @@ export default {
 
         // 异步
         await this.$store.dispatch('user/doLogin', this.loginForm)
-        // 如果登录成功，跳转到首页
-        this.$router.push('/')
+
         // 提示用户登录成功
         this.$message({
           type: 'success',
           message: '登陆成功'
         })
+        setTimeout(() => {
+          // 如果登录成功，跳转到首页
+          this.$router.push('/')
+        }, 2000)
       }
     }
   }
