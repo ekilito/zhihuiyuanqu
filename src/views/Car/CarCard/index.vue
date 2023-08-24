@@ -33,11 +33,15 @@
     <!-- 新增删除操作区域 -->
     <div class="create-container">
       <el-button type="primary" @click="$router.push('/addCard')">添加月卡</el-button>
-      <el-button>批量删除</el-button>
+      <el-button @click="delCartList">批量删除</el-button>
     </div>
     <!-- 表格区域 -->
     <div class="table">
-      <el-table style="width: 100%" :data="cardList">
+      <el-table style="width: 100%" :data="cardList" @selection-change="handleSelectionChange">
+        <el-table-column
+          type="selection"
+          width="55"
+        />
         <el-table-column type="index" label="序号" />
         <!-- 通过 prop 渲染 -->
         <el-table-column label="车主名称" prop="personName" />
@@ -52,11 +56,27 @@
       -->
         <el-table-column label="状态" prop="cardStatus" :formatter="formatStatus" />
         <el-table-column label="操作" fixed="right" width="180">
+          <!--
+             scope 作用域插槽
+             scope.row  -> 当前行的数据对象
+
+             如果我们只是想使用插槽渲染模板 #default
+             如果我们除了想要使用插槽渲染模板 而且还想要拿到它内部的数据 #default="scope"
+             scope 类似于函数的形参
+             组件内部会把当前行数数据对象当成一个实参传到scope的位置
+
+             在内部传递实参的时候 实参的格式
+             {
+              row: 当前行的对象数据
+             }
+
+             因为本来传下来的就是一个对象 所以通过解构赋值的方式去取row参数 #default="{row}"
+          -->
           <template #default="scope">
             <el-button size="mini" type="text">续费</el-button>
             <el-button size="mini" type="text">查看</el-button>
-            <el-button size="mini" type="text">编辑</el-button>
-            <el-button size="mini" type="text">删除</el-button>
+            <el-button size="mini" type="text" @click="editCard(scope.row.id)">编辑</el-button>
+            <el-button size="mini" type="text" @click="delCard(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -105,7 +125,7 @@
 </template>
 
 <script>
-import { getCardListAPI } from '@/api/card.js'
+import { getCardListAPI, delCardAPI, delCardListAPI } from '@/api/card.js'
 export default {
   data() {
     return {
@@ -134,7 +154,9 @@ export default {
           id: 1,
           name: '已过期'
         }
-      ]
+      ],
+      // 已选择列表
+      selectedCarList: []
     }
   },
   mounted() {
@@ -173,7 +195,61 @@ export default {
       // 调用接口之前把页数参数重置为1
       this.params.page = 1
       this.getCardList()
+    },
+    // 编辑
+    editCard(id) {
+      this.$router.push({
+        path: '/addCard',
+        query: {
+          id
+        }
+      })
+    },
+    // 删除逻辑
+    delCard(id) {
+      // 提示用户
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        // 确认逻辑 调用删除接口 重新渲染 提示成功
+        await delCardAPI(id)
+        this.getCardList()
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    // 批量删除的逻辑
+    handleSelectionChange(rowList) {
+    // console.log(rowList) [{...},{...},...]
+    // 1. 添加新列 展示多选框
+    // 2. 绑定事件 拿到选中的所有对象组成的数组
+    // 3. 调用接口需要做的事情 把对象数组的每一项里的id拿到 拼接成逗号分割的写法
+      this.selectedCarList = rowList
+    },
+    delCartList() {
+      this.$confirm('此操作将永久删除选择的月卡, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        // 处理id
+        await delCardListAPI(this.selectedCarList.map(item => item.id))
+        this.getCardList()
+        this.$message({
+          type: 'success',
+          message: '批量删除成功!'
+        })
+      }).catch((error) => {
+        console.log(error)
+      })
     }
+
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="add-card">
     <header class="add-header">
-      <el-page-header content="增加月卡" @back="$router.back()" />
+      <el-page-header :content="id? '编辑月卡' : '新增月卡'" @back="$router.back()" />
     </header>
     <main class="add-main">
       <div class="form-container">
@@ -63,7 +63,7 @@
     </main>
     <footer class="add-footer">
       <div class="btn-container">
-        <el-button>重置</el-button>
+        <el-button @click="resetForm">重置</el-button>
         <el-button type="primary" @click="confirmAdd">确定</el-button>
       </div>
     </footer>
@@ -71,7 +71,8 @@
 </template>
 
 <script>
-import { createCardAPI } from '@/api/card.js'
+import { createCardAPI, getCardDetailAPI, updateCardAPI } from '@/api/card.js'
+
 export default {
   data() {
     const validaeCarNumber = (rule, value, callback) => {
@@ -162,6 +163,16 @@ export default {
       ]
     }
   },
+  computed: {
+    id() {
+      return this.$route.query.id
+    }
+  },
+  mounted() {
+    if (this.id) {
+      this.getDetail()
+    }
+  },
   methods: {
     // 确定
     confirmAdd() {
@@ -185,12 +196,44 @@ export default {
               }
               // 删掉多余字段
               delete payload.payTime
-              await createCardAPI(payload)
+
+              if (this.id) {
+              // 编辑
+                await updateCardAPI(payload)
+                this.$message.success('编辑成功')
+              } else {
+                await createCardAPI(payload)
+                this.$message.success('新增成功')
+              }
+
               this.$router.back()
             }
           })
         }
       })
+    },
+    // 重置表单
+    resetForm() {
+      this.$refs.feeForm.resetFields()
+      this.$refs.carInfoForm.resetFields()
+    },
+    // 获取详情
+    async getDetail() {
+      const res = await getCardDetailAPI(this.id)
+      // 回填车辆信息表单
+      const { carInfoId, personName, phoneNumber, carNumber, carBrand } = res.data
+      this.carInfoForm = {
+        personName, phoneNumber, carNumber, carBrand, carInfoId
+      }
+
+      // 回填缴费信息表单
+      const { rechargeId, cardStartDate, cardEndDate, paymentAmount, paymentMethod } = res.data
+      this.feeForm = {
+        rechargeId,
+        paymentAmount,
+        paymentMethod,
+        payTime: [cardStartDate, cardEndDate]
+      }
     }
   }
 }
