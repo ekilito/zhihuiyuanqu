@@ -106,3 +106,16 @@ export function getRentListAPI(id) {
     url: `/park/enterprise/rent/${id}`
   })
 }
+
+/**
+ * 退租
+ * @param {合同id} rentId
+ * @returns
+ */
+
+export function outRentAPI(rentId) {
+  return request({
+    url: `/park/enterprise/rent/${rentId}`,
+    method: 'PUT'
+  })
+}

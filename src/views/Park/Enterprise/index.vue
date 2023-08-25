@@ -21,11 +21,21 @@
             <el-table :data="row.rentList">
               <el-table-column label="租赁楼宇" width="320" prop="buildingName" />
               <el-table-column label="租赁起始时间" prop="startTime" />
-              <el-table-column label="合同状态" prop="status" />
+              <el-table-column label="合同状态">
+                <template #default="scope">
+                  <el-tag :type="formatInfoType(scope.row.status)">
+                    {{ formatStatus(scope.row.status) }}
+                  </el-tag>
+                </template>
+              </el-table-column>
               <el-table-column label="操作" width="180">
                 <template #default="scope">
-                  <el-button size="mini" type="text">退租</el-button>
-                  <el-button size="mini" type="text">删除</el-button>
+                  <!--
+    退租：如果当前是退租的状态 禁用 如果不是 启用
+    删除：只有已退租的时候 删除才是启用的 否则就禁用
+    -->
+                  <el-button size="mini" type="text" :disabled="scope.row.status === 3" @click="outRent(scope.row.id)">退租</el-button>
+                  <el-button size="mini" type="text" :disabled="scope.row.status !== 3">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -120,7 +130,7 @@
 </template>
 
 <script>
-import { getEnterpriseListAPI, delExterpriseAPI, uploadAPI, createRentAPI, getRentListAPI } from '@/api/enterprise'
+import { getEnterpriseListAPI, delExterpriseAPI, uploadAPI, createRentAPI, getRentListAPI, outRentAPI } from '@/api/enterprise'
 import { getRentBuildListAPI } from '@/api/building'
 export default {
   data() {
@@ -160,6 +170,7 @@ export default {
     this.getExterpriseList()
   },
   methods: {
+
     // 获取公司列表
     async getExterpriseList() {
       const res = await getEnterpriseListAPI(this.params)
@@ -286,12 +297,59 @@ export default {
       // row: 当前行的对象  rows数组对象
       // 1. 先拿到当前行的数据
       // 2. 使用当前行的企业数据，获取下面的合同列表数据
+
+      // 优化网络请求 只在打开时才去触发 核心：拿到当前是打开的条件 做判断
+      // 判断条件：第一个row是否能在第二个rows中找到 如果找到了 代表打开了 如果找不到 代表收起了
+      // find findIndex
       const isExpend = rows.find(item => item.id === row.id)
       if (isExpend) {
+        // 如果找到了这一项，才回去调用接口
         const res = await getRentListAPI(row.id)
         // eslint-disable-next-line require-atomic-updates
         row.rentList = res.data
       }
+    },
+    // 格式化tag类型
+    formatInfoType(status) {
+      const MAP = {
+        0: 'warning',
+        1: 'success',
+        2: 'info',
+        3: 'danger'
+      }
+      // return 格式化之后的中文显示
+      return MAP[status]
+    },
+    // 格式化status
+    formatStatus(type) {
+      const TYPEMAP = {
+        0: '待生效',
+        1: '生效中',
+        2: '已到期',
+        3: '已退租'
+      }
+      return TYPEMAP[type]
+    },
+    outRent(rentId) {
+      this.$confirm('确认退租吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        // 1. 调用接口
+        await outRentAPI(rentId)
+        // 2. 重新拉取列表
+        this.getEnterpriseListAPI()
+        this.$message({
+          type: 'success',
+          message: '退租成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
   }
 }
