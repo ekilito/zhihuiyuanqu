@@ -82,3 +82,16 @@ export function delExterpriseAPI(id) {
     method: 'DELETE'
   })
 }
+
+/**
+ * 创建合同
+ * @param {*}
+ * @returns
+ */
+export function createRentAPI(data) {
+  return request({
+    url: '/park/enterprise/rent',
+    method: 'POST',
+    data
+  })
+}
