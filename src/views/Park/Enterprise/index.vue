@@ -11,7 +11,26 @@
     </div>
     <!-- 表格区域 -->
     <div class="table">
-      <el-table style="width: 100%" :data="exterpriseList">
+      <!--
+
+        @expand-change="expandHandle"
+       -->
+      <el-table style="width: 100%" :data="exterpriseList" @expand-change="expandHandle">
+        <el-table-column type="expand">
+          <template #default="{row}">
+            <el-table :data="row.rentList">
+              <el-table-column label="租赁楼宇" width="320" prop="buildingName" />
+              <el-table-column label="租赁起始时间" prop="startTime" />
+              <el-table-column label="合同状态" prop="status" />
+              <el-table-column label="操作" width="180">
+                <template #default="scope">
+                  <el-button size="mini" type="text">退租</el-button>
+                  <el-button size="mini" type="text">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-table-column>
         <el-table-column type="index" label="序号" />
         <el-table-column label="企业名称" width="320" prop="name" />
         <el-table-column label="联系人" prop="contact" />
@@ -101,7 +120,7 @@
 </template>
 
 <script>
-import { getEnterpriseListAPI, delExterpriseAPI, uploadAPI, createRentAPI } from '@/api/enterprise'
+import { getEnterpriseListAPI, delExterpriseAPI, uploadAPI, createRentAPI, getRentListAPI } from '@/api/enterprise'
 import { getRentBuildListAPI } from '@/api/building'
 export default {
   data() {
@@ -144,7 +163,14 @@ export default {
     // 获取公司列表
     async getExterpriseList() {
       const res = await getEnterpriseListAPI(this.params)
-      this.exterpriseList = res.data.rows
+      // this.exterpriseList = res.data.rows
+      // 数据赋值 （针对于每一行数据初始化一个专门存放合同列表的位置）
+      this.exterpriseList = res.data.rows.map((item) => {
+        return {
+          ...item,
+          rentList: [] // 每一行补充存放合同的列表
+        }
+      })
       this.total = res.data.total
     },
     // 分页的逻辑
@@ -252,6 +278,20 @@ export default {
           this.$message.success('添加合同成功')
         }
       })
+    },
+
+    // 3. 只有展开时获取数据并绑定
+    async expandHandle(row, rows) {
+      // console.log('展开或关闭', row, rows) 点击行row.id  rows数组对象
+      // row: 当前行的对象  rows数组对象
+      // 1. 先拿到当前行的数据
+      // 2. 使用当前行的企业数据，获取下面的合同列表数据
+      const isExpend = rows.find(item => item.id === row.id)
+      if (isExpend) {
+        const res = await getRentListAPI(row.id)
+        // eslint-disable-next-line require-atomic-updates
+        row.rentList = res.data
+      }
     }
   }
 }
