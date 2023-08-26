@@ -51,7 +51,7 @@
         <el-table-column label="操作">
           <template #default="scope">
             <el-button size="mini" type="text" @click="addRent(scope.row.id)">添加合同</el-button>
-            <el-button size="mini" type="text">查看</el-button>
+            <el-button size="mini" type="text" @click="lookRent(scope.row.id)">查看</el-button>
             <el-button size="mini" type="text" @click="editRent(scope.row.id)">编辑</el-button>
             <el-button size="mini" type="text" @click="delExterprise(scope.row.id)">删除</el-button>
           </template>
@@ -338,17 +338,26 @@ export default {
       }).then(async() => {
         // 1. 调用接口
         await outRentAPI(rentId)
-        // 2. 重新拉取列表
-        this.getEnterpriseListAPI()
+
         this.$message({
           type: 'success',
           message: '退租成功!'
         })
+        // 2. 重新拉取列表
+        // this.getEnterpriseListAPI()
+        this.getExterpriseList()
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: '已取消删除'
+          message: '已取消退租'
         })
+      })
+    },
+    // 查看
+    lookRent(id) {
+      this.$router.push({
+        path: '/enterpriseDetail',
+        query: { id }
       })
     }
   }

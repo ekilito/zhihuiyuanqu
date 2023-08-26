@@ -119,3 +119,16 @@ export function outRentAPI(rentId) {
     method: 'PUT'
   })
 }
+
+/**
+ * 获取详情
+ * @param {企业id} id
+ * @returns
+ */
+
+export function getEnterpriseDetail(id) {
+  return request({
+    url: `/park/enterprise/${id}`,
+    method: 'GET'
+  })
+}

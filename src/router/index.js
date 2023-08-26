@@ -29,6 +29,11 @@ export const routes = [
     component: () =>
       import ('@/views/Park/Enterprise/AddEnterprise.vue')
   },
+  {
+    path: '/enterpriseDetail',
+    component: () =>
+      import ('@/views/Park/Enterprise/enterpriseDetail.vue')
+  },
   // 只有一级路由
   // 一级路由：负责把Layout架子渲染出来
   // 二级路由：path为空 会作为默认的二级路由一上来就渲染出来
