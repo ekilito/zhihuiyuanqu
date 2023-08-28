@@ -11,3 +11,26 @@ export function getEmployeeListAPI(params) {
     params
   })
 }
+
+/**
+ * 添加员工
+ * @returns
+ */
+export function createEmployeeAPI(data) {
+  return request({
+    url: `/park/sys/user`,
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 删除员工
+ * @returns
+ */
+export function delEmployeeAPI(id) {
+  return request({
+    url: `/park/sys/user/${id}`,
+    method: 'DELETE'
+  })
+}

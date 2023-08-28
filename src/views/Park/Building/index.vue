@@ -19,7 +19,7 @@
         <el-table-column
           type="index"
           label="序号"
-          width="180"
+          width="160"
         />
         <el-table-column
           label="楼宇名称"
