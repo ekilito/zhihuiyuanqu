@@ -41,7 +41,7 @@
             </el-table>
           </template>
         </el-table-column>
-        <el-table-column type="index" label="序号" />
+        <el-table-column type="index" label="序号" width="100" />
         <el-table-column label="企业名称" width="320" prop="name" />
         <el-table-column label="联系人" prop="contact" />
         <el-table-column
