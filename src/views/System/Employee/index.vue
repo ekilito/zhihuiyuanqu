@@ -46,7 +46,7 @@
     </div>
     <!-- 添加员工 -->
     <el-dialog
-      title="添加员工"
+      :title="employeeType"
       width="480px"
       :visible="dialogVisible"
       @close="closeDialog"
@@ -131,6 +131,16 @@ export default {
         ]
       }
     }
+  },
+  computed: {
+    employeeType() {
+      if (this.addForm.id) {
+        return '编辑员工'
+      } else {
+        return '添加员工'
+      }
+    }
+
   },
   created() {
     this.initData()
