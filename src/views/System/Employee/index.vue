@@ -3,8 +3,8 @@
     <!-- 搜索区域 -->
     <div class="search-container">
       <div class="search-label">员工姓名：</div>
-      <el-input clearable placeholder="请输入内容" class="search-main" />
-      <el-button type="primary">查询</el-button>
+      <el-input v-model="params.name" clearable placeholder="请输入内容" class="search-main" @clear="clearSearch" />
+      <el-button type="primary" @click="initData">查询</el-button>
     </div>
     <div class="create-container">
       <el-button type="primary" @click="addEmployee">添加员工</el-button>
@@ -25,25 +25,25 @@
         <el-table-column label="添加时间" prop="createTime" width="180" />
         <el-table-column label="操作" fixed="right" width="220">
           <template #default="scope">
-            <el-button size="mini" type="text">编辑</el-button>
+            <el-button size="mini" type="text" @click="edit(scope.row.id)">编辑</el-button>
             <el-button size="mini" type="text" @click="delEmployee(scope.row.id)">删除</el-button>
-            <el-button size="mini" type="text">重置密码</el-button>
+            <el-button size="mini" type="text" @click="resetPassword(scope.row.id)">重置密码</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <div class="page-container">
+      <!-- 分页器 -->
       <el-pagination
-        layout="total, prev, pager, next"
+        :current-page="params.page"
+        layout="total, sizes,prev, pager, next"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="params.pageSize"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="pageChange"
       />
     </div>
-    <!-- 分页器 -->
-    <el-pagination
-      layout="total, prev, pager, next"
-      :page-size="params.pageSize"
-      :total="total"
-      @current-change="pageChange"
-    />
     <!-- 添加员工 -->
     <el-dialog
       title="添加员工"
@@ -91,7 +91,7 @@
 </template>
 
 <script>
-import { getEmployeeListAPI, createEmployeeAPI, delEmployeeAPI } from '@/api/employee'
+import { getEmployeeListAPI, createEmployeeAPI, delEmployeeAPI, userdetailsAPI, editUserAPI, resetPasswordAPI } from '@/api/employee'
 import { getRoleListAPI } from '@/api/system'
 export default {
   name: 'Employee',
@@ -132,21 +132,37 @@ export default {
       }
     }
   },
-  mounted() {
-    this.getEmployeeList() // 渲染列表
+  created() {
+    this.initData()
   },
   methods: {
-    async getEmployeeList() {
+  // 初始化渲染列表
+    async initData() {
       const res = await getEmployeeListAPI(this.params)
+      // console.log(res)
       this.employeeList = res.data.rows
       this.total = res.data.total
     },
+    handleSizeChange(val) {
+      this.params.pageSize = val
+      this.initData()
+      // console.log(`每页 ${val} 条`)
+    },
+
     pageChange(page) {
       this.params.page = page
-      this.getEmployeeList()
+      this.initData()
     },
     // 关闭弹框
     closeDialog() {
+      this.addForm = {
+        name: '',
+        phonenumber: '',
+        roleId: '',
+        status: null,
+        userName: ''
+      }
+      this.$refs.addForm.resetFields()
       this.dialogVisible = false
     },
 
@@ -159,26 +175,26 @@ export default {
       const res = await getRoleListAPI()
       this.roleList = res.data
     },
-    // 添加员工
+    // 添加员工 / 编辑
     async confirmAdd() {
       await this.$refs.addForm.validate()
 
-      // 1. 调用接口
-      await createEmployeeAPI(this.addForm)
+      if (this.addForm.id) {
+        await editUserAPI(this.addForm)
+        this.$message.success('编辑成功')
+      } else {
+        // 1. 调用接口
+        await createEmployeeAPI(this.addForm)
+        // 提示
+        this.$message.success('添加员工成功')
+      }
       // 2. 关闭弹框
       this.dialogVisible = false
       // 3. 重新刷新列表
-      this.getEmployeeList()
-      // 提示
-      this.$message.success('添加员工成功')
+      this.initData()
+
       // 4. 清空表单记录
-      this.addForm = {
-        name: '',
-        phonenumber: '',
-        roleId: '',
-        status: 1,
-        userName: ''
-      }
+      this.closeDialog()
     },
     // 删除员工
     delEmployee(id) {
@@ -192,12 +208,54 @@ export default {
           type: 'success',
           message: '删除员工成功'
         })
-        this.getEmployeeList()
+        this.initData()
       })
     },
     // 适配员工状态处理函数
     formatStatus(status) {
       return status === 1 ? '启用' : '禁用'
+    },
+    // 点击x重新拉取全部企业
+    clearSearch() {
+      this.initData()
+    },
+    // 点击编辑
+    async edit(id) {
+      this.dialogVisible = true
+      const res = await userdetailsAPI(id)
+      // const row = await getRoleListAPI()
+      // this.roleList = row.data
+      // console.log(res)
+      this.addForm = {
+        name: res.data.name,
+        phonenumber: res.data.phonenumber,
+        roleName: res.data.roleName,
+        roleId: res.data.roleId,
+        status: res.data.status,
+        userName: res.data.userName,
+        id: id
+      }
+    },
+    //  重置密码
+    resetPassword(id) {
+      this.$confirm('是否重置密码为123456?', '温馨提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async() => {
+          await resetPasswordAPI(id)
+          this.$message({
+            type: 'success',
+            message: '重置成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消重置'
+          })
+        })
     }
   }
 }

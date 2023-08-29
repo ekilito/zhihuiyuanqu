@@ -34,3 +34,41 @@ export function delEmployeeAPI(id) {
     method: 'DELETE'
   })
 }
+
+/**
+ * 获取用户详情
+ * @param {*} id
+ * @returns
+ */
+
+export function userdetailsAPI(id) {
+  return request({
+    url: `/park/sys/user/${id}`
+  })
+}
+
+/**
+ * 编辑
+ * @param {*} id
+ * @returns
+ */
+export function editUserAPI(data) {
+  return request({
+    url: '/park/sys/user',
+    method: 'PUT',
+    data
+  })
+}
+
+/**
+ * 重置密码
+ * @param {*} id
+ * @returns
+ */
+export function resetPasswordAPI(id) {
+  return request({
+    url: '/park/sys/user/resetPwd',
+    method: 'PUT',
+    data: { id }
+  })
+}
