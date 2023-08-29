@@ -105,6 +105,16 @@ export const routes = [
     ]
   },
   {
+    path: '/propety',
+    component: Layout,
+    children: [{
+      path: '',
+      component: () =>
+        import ('@/views/Propety'),
+      meta: { title: '物业费管理', icon: 'el-icon-wallet' }
+    }]
+  },
+  {
     path: '/pole',
     component: Layout,
     permission: 'pole',
