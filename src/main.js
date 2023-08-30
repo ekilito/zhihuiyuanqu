@@ -26,6 +26,12 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
+// 全局组件
+// import '@/components/index'
+// 注册自己的插件
+import componentPlugin from '@/components'
+Vue.use(componentPlugin)
+
 // vue实例化
 new Vue({
   el: '#app',
