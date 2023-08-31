@@ -48,3 +48,38 @@ export function getRoleUserAPI(roleId) {
     url: `/park/sys/roleUser/${roleId}`
   })
 }
+
+/**
+ * 创建角色
+ * @returns
+ */
+export function createRoleUserAPI(data) {
+  return request({
+    url: `/park/sys/role`,
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 更改角色
+ * @returns
+ */
+export function updateRoleAPI(data) {
+  return request({
+    url: `/park/sys/role`,
+    method: 'PUT',
+    data
+  })
+}
+
+/**
+ * 删除角色
+ * @returns
+ */
+export function delRoleUserAPI(roleId) {
+  return request({
+    url: `/park/sys/role/${roleId}`,
+    method: 'DELETE'
+  })
+}

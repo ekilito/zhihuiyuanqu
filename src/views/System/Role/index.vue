@@ -26,7 +26,15 @@
           {{ item.roleName }}
         </div>
         <div class="more">
-          <svg-icon icon-class="more" />
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              <svg-icon icon-class="more" />
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="goEdit(item.roleId)">编辑角色</el-dropdown-item>
+              <el-dropdown-item @click.native="delRoleUser(item.roleId)">删除</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </div>
       </div>
       <el-button class="addBtn" size="mini" @click="$router.push('/addRole')">添加角色</el-button>
@@ -81,7 +89,7 @@
 </template>
 
 <script>
-import { getroleListAPI, getTreeListAPI, getRoleDetailAPI, getRoleUserAPI } from '@/api/system'
+import { getroleListAPI, getTreeListAPI, getRoleDetailAPI, getRoleUserAPI, delRoleUserAPI } from '@/api/system'
 // 递归处理函数
 // 必须有子集才会调用这个递归函数
 function addDisabled(treeList) {
@@ -162,6 +170,28 @@ export default {
     async getRoleUserList(roleId) {
       const res = await getRoleUserAPI(roleId)
       this.roleUserList = res.data.rows
+    },
+    // 编辑操作
+    goEdit(id) {
+      this.$router.push({
+        path: '/addRole',
+        query: { id }
+      })
+    },
+    // 删除角色
+    delRoleUser(id) {
+      this.$confirm('是否确认删除当前角色?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await delRoleUserAPI(id)
+        this.getRoleList()
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      })
     }
   }
 }
