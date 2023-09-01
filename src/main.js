@@ -16,6 +16,9 @@ import store from './store'
 
 import router from './router'
 
+// 执行全局指令注册
+import '@/directive/index'
+
 import './permission'
 
 // 注册svg

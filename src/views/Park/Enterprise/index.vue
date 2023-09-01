@@ -7,7 +7,8 @@
       <el-button type="primary" @click="doSearch">查询</el-button>
     </div>
     <div class="create-container">
-      <el-button type="primary" @click="$router.push('/addEnterprise')">添加企业</el-button>
+      <el-button v-auth-btn="'park:enterprise:add_edit'" type="primary" @click="$router.push('/addEnterprise')">添加企业</el-button>
+      <el-button v-auth-btn="'park:enterprise:remove'" type="primary">测试</el-button>
     </div>
     <!-- 表格区域 -->
     <div class="table">
