@@ -32,7 +32,10 @@ function getSecondRoutePerms(permsArr) {
 // 根据权限标识过滤路由表
 function getRoutes(firstRoutePerms, secondRoutePerms, asyncRoutes) {
   // console.log(firstRoutePerms)
-
+  if (firstRoutePerms.includes('*')) {
+    // 管理员
+    return asyncRoutes
+  }
   // 根据一级和二级对动态路由表做过滤 return出去过滤之后的路由表
   // 1. 根据一级路由对动态路由表做过滤
   return asyncRoutes.filter(route => {
