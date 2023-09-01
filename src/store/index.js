@@ -2,12 +2,14 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 // 默认导入
 import user from './modules/user'
+import menu from './modules/menu'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   // 组合模块的配置项
   modules: {
-    user: user // 右边user匹配导入的 可以修改
+    user: user, // 右边user匹配导入的 可以修改
+    menu
   }
 })
 

@@ -30,7 +30,13 @@ export default {
   computed: {
     routes() {
       //  内置的属性 拿到的是路由初始化的时候传入routes配置项中的数组
-      return this.$router.options.routes
+      // return this.$router.options.routes
+      // 改写组件中菜单渲染数据
+      // 解决方案：一个地方能动态的往里面添加数据据 且一旦数据变化 还会让视图发生重新渲染
+      // data vuex
+      // 1. permission.js 中得到最终的路由表之后 存入vuex
+      // 2. 把当前位置静态的路由表改成具有响应式特性的Vuex中的数据
+      return this.$store.state.menu.menuList
     },
     activeMenu() {
       const route = this.$route

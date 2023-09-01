@@ -35,6 +35,8 @@ export default {
       }).then(() => {
         // 确认回调
         this.$store.commit('user/clearUserInfo')
+        // 清空路由
+        this.$store.commit('menu/resetRouter')
         // 跳转到登录
         this.$router.push('/login')
       }).catch(() => {
