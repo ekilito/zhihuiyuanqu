@@ -3,6 +3,8 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
+          <el-button size="small" plain
+    @click="$router.push('/big-screen')" style="margin-right: 20px;background-color: red;color: aliceblue;">可视化大屏</el-button>
           <!-- 用户名称 -->
           <span class="name">系统管理员</span>
         </div>
