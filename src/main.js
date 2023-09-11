@@ -30,6 +30,9 @@ Vue.use(ElementUI)
 // 启动微前端配置
 import './registerMicroApp'
 
+// 测试环境变量
+console.log('环境变量为：', process.env.VUE_APP_BASE_URL)
+
 Vue.config.productionTip = false
 
 // 全局组件
