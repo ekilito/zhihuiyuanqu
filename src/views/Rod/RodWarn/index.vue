@@ -61,7 +61,7 @@
           prop="warningTime"
         />
         <el-table-column label="操作">
-          <template #default="scope">
+          <template #default="">
             <el-button
               size="mini"
               type="text"

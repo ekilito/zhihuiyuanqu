@@ -27,6 +27,9 @@ import '@/icons'
 // 全局注册ElementUI组件
 Vue.use(ElementUI)
 
+// 启动微前端配置
+import './registerMicroApp'
+
 Vue.config.productionTip = false
 
 // 全局组件
@@ -37,8 +40,8 @@ Vue.use(componentPlugin)
 
 // vue实例化
 new Vue({
-  el: '#app',
-  router,
-  store,
-  render: h => h(App)
+    el: '#app',
+    router,
+    store,
+    render: h => h(App)
 })
