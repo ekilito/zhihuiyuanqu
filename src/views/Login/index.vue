@@ -10,7 +10,7 @@
       <el-card shadow="never">
         <div class="title">
           <img src="~@/assets/yq.png" alt="">
-          <h2> we+智慧园区</h2>
+          <h2> we+数字园区</h2>
         </div>
         <!--
              基础校验

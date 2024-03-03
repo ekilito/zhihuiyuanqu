@@ -1,7 +1,10 @@
 <template>
   <div class="add-card">
     <header class="add-header">
-      <el-page-header :content="id? '编辑月卡' : '新增月卡'" @back="$router.back()" />
+      <el-page-header
+        :content="id ? '编辑园区车辆' : '新增园区车辆'"
+        @back="$router.back()"
+      />
     </header>
     <main class="add-main">
       <div class="form-container">
@@ -12,7 +15,12 @@
          el-input v-model双向绑定
         -->
         <div class="form">
-          <el-form ref="carInfoForm" :model="carInfoForm" :rules="carInfoRules" label-width="100px">
+          <el-form
+            ref="carInfoForm"
+            :model="carInfoForm"
+            :rules="carInfoRules"
+            label-width="100px"
+          >
             <el-form-item prop="personName" label="车主姓名">
               <el-input v-model="carInfoForm.personName" />
             </el-form-item>
@@ -28,12 +36,12 @@
           </el-form>
         </div>
       </div>
-      <div class="form-container">
+      <!-- <div class="form-container">
         <div class="title">最新一次月卡缴费信息</div>
         <div class="form">
           <el-form ref="feeForm" :model="feeForm" :rules="feeFormRules" label-width="100px">
             <el-form-item prop="payTime" label="有效日期">
-              <!-- 日期组件 -->
+
               <el-date-picker
                 v-model="feeForm.payTime"
                 type="daterange"
@@ -58,8 +66,7 @@
             </el-form-item>
           </el-form>
         </div>
-      </div>
-
+      </div> -->
     </main>
     <footer class="add-footer">
       <div class="btn-container">
@@ -71,106 +78,115 @@
 </template>
 
 <script>
-import { createCardAPI, getCardDetailAPI, updateCardAPI } from '@/api/card.js'
+import { createCardAPI, getCardDetailAPI, updateCardAPI } from "@/api/card.js";
 
 export default {
   data() {
     const validaeCarNumber = (rule, value, callback) => {
       // value : 用户在表单里输入的最新的数据
-      const plateNumberRegex = /^[\u4E00-\u9FA5][\da-zA-Z]{6}$/
+      const plateNumberRegex = /^[\u4E00-\u9FA5][\da-zA-Z]{6}$/;
       if (plateNumberRegex.test(value)) {
-        callback()
+        callback();
       } else {
-        callback(new Error('请输入正确的车牌号'))
+        callback(new Error("请输入正确的车牌号"));
       }
-    }
+    };
     return {
       // 车辆信息表单
       carInfoForm: {
-        personName: '', // 车主姓名
-        phoneNumber: '', // 联系方式
-        carNumber: '', // 车牌号码
-        carBrand: '' // 车辆品牌
+        personName: "", // 车主姓名
+        phoneNumber: "", // 联系方式
+        carNumber: "", // 车牌号码
+        carBrand: "", // 车辆品牌
       },
       carInfoRules: {
         personName: [
           {
-            required: true, message: '请输入车主姓名', trigger: 'blur'
-          }
+            required: true,
+            message: "请输入车主姓名",
+            trigger: "blur",
+          },
         ],
         phoneNumber: [
           {
-            required: true, message: '请输入联系方式', trigger: 'blur'
-          }
+            required: true,
+            message: "请输入联系方式",
+            trigger: "blur",
+          },
         ],
         carNumber: [
           {
-            required: true, message: '请输入车辆号码', trigger: 'blur'
+            required: true,
+            message: "请输入车辆号码",
+            trigger: "blur",
           },
           {
-            validator: validaeCarNumber, trigger: 'blur'
-          }
+            validator: validaeCarNumber,
+            trigger: "blur",
+          },
         ],
         carBrand: [
           {
-            required: true, message: '请输入车辆品牌', trigger: 'blur'
-          }
-        ]
+            required: true,
+            message: "请输入车辆品牌",
+            trigger: "blur",
+          },
+        ],
       },
       // 缴费信息表单
       feeForm: {
-        payTime: '', // 支付时间
+        payTime: "", // 支付时间
         paymentAmount: null, // 支付金额
-        paymentMethod: '' // 支付方式
+        paymentMethod: "", // 支付方式
       },
       // 缴费规则
       feeFormRules: {
         payTime: [
           {
             required: true,
-            message: '请选择支付时间'
-          }
+            message: "请选择支付时间",
+          },
         ],
         paymentAmount: [
           {
             required: true,
-            message: '请输入支付金额',
-            trigger: 'blur'
-          }
+            message: "请输入支付金额",
+            trigger: "blur",
+          },
         ],
         paymentMethod: [
           {
             required: true,
-            message: '请选择支付方式',
-            trigger: 'change'
-          }
-        ]
+            message: "请选择支付方式",
+            trigger: "change",
+          },
+        ],
       },
       // 支付方式列表
       payMethodList: [
         {
-          id: 'Alipay',
-          name: '支付宝'
+          id: "Alipay",
+          name: "支付宝",
         },
         {
-          id: 'WeChat',
-          name: '微信'
+          id: "WeChat",
+          name: "微信",
         },
         {
-          id: 'Cash',
-          name: '线下'
-        }
-      ]
-    }
+          id: "Cash",
+          name: "线下",
+        },
+      ],
+    };
   },
   computed: {
     id() {
-      return this.$route.query.id
-    }
+      return this.$route.query.id;
+    },
   },
   mounted() {
     if (this.id) {
-      this.getDetail()
+      this.getDetail();
     }
   },
   methods: {
@@ -180,63 +196,74 @@ export default {
       // 调用实例的validate方法
       // 1. 串行校验 第一个表单校验通过之后开始第二个表单
       // 2. 并行校验 两个表单同时进行校验
-      this.$refs.carInfoForm.validate(valid => {
+      this.$refs.carInfoForm.validate((valid) => {
         if (valid) {
-          this.$refs.feeForm.validate(async valid => {
+          this.$refs.feeForm.validate(async (valid) => {
             if (valid) {
-            // 全部校验通过
-            // TODO 确定
+              // 全部校验通过
+              // TODO 确定
               // 二次参数处理
               const payload = {
                 ...this.feeForm,
                 ...this.carInfoForm,
                 // 单独处理时间
                 cardStartDate: this.feeForm.payTime[0],
-                cardEndDate: this.feeForm.payTime[1]
-              }
+                cardEndDate: this.feeForm.payTime[1],
+              };
               // 删掉多余字段
-              delete payload.payTime
+              delete payload.payTime;
 
               if (this.id) {
-              // 编辑
-                await updateCardAPI(payload)
-                this.$message.success('编辑成功')
+                // 编辑
+                await updateCardAPI(payload);
+                this.$message.success("编辑成功");
               } else {
-                await createCardAPI(payload)
-                this.$message.success('新增成功')
+                await createCardAPI(payload);
+                this.$message.success("新增成功");
               }
 
-              this.$router.back()
+              this.$router.back();
             }
-          })
+          });
         }
-      })
+      });
     },
     // 重置表单
     resetForm() {
-      this.$refs.feeForm.resetFields()
-      this.$refs.carInfoForm.resetFields()
+      this.$refs.feeForm.resetFields();
+      this.$refs.carInfoForm.resetFields();
     },
     // 获取详情
     async getDetail() {
-      const res = await getCardDetailAPI(this.id)
+      const res = await getCardDetailAPI(this.id);
       // 回填车辆信息表单
-      const { carInfoId, personName, phoneNumber, carNumber, carBrand } = res.data
+      const { carInfoId, personName, phoneNumber, carNumber, carBrand } =
+        res.data;
       this.carInfoForm = {
-        personName, phoneNumber, carNumber, carBrand, carInfoId
-      }
+        personName,
+        phoneNumber,
+        carNumber,
+        carBrand,
+        carInfoId,
+      };
 
       // 回填缴费信息表单
-      const { rechargeId, cardStartDate, cardEndDate, paymentAmount, paymentMethod } = res.data
+      const {
+        rechargeId,
+        cardStartDate,
+        cardEndDate,
+        paymentAmount,
+        paymentMethod,
+      } = res.data;
       this.feeForm = {
         rechargeId,
         paymentAmount,
         paymentMethod,
-        payTime: [cardStartDate, cardEndDate]
-      }
-    }
-  }
-}
+        payTime: [cardStartDate, cardEndDate],
+      };
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
@@ -255,7 +282,7 @@ export default {
       span {
         margin-right: 4px;
       }
-      .arrow{
+      .arrow {
         cursor: pointer;
       }
     }
@@ -292,8 +319,8 @@ export default {
         }
       }
     }
-    .preview{
-      img{
+    .preview {
+      img {
         width: 100px;
       }
     }

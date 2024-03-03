@@ -17,6 +17,7 @@ export const asyncRoutes = [
                 component: () =>
                     import ("@/views/Park/Building/index"),
             },
+
             {
                 path: "enterprise",
                 permission: "park:enterprise",
@@ -37,9 +38,15 @@ export const asyncRoutes = [
                 permission: "parking:area",
                 component: () =>
                     import ("@/views/Car/CarArea"),
-                meta: { title: "区域管理" },
+                meta: { title: "园区区域管理" },
             },
-
+            {
+                path: "card",
+                permission: "parking:card",
+                component: () =>
+                    import ("@/views/Car/CarCard"),
+                meta: { title: "园区车辆管理" },
+            },
             {
                 path: "pay",
                 permission: "parking:payment",

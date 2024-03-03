@@ -23,7 +23,7 @@ module.exports = {
         }
     },
     configureWebpack: {
-        name: 'we+智慧园区',
+        name: 'we+数字园区',
         resolve: {
             alias: {
                 '@': resolve('src')
