@@ -2,3 +2,10 @@ build/*.js
 src/assets
 public
 dist
+# 忽略文件
+**/*-min.js
+**/*.min.js
+**/*.vue
+**/*.js
+
+iconfont.js
