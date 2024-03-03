@@ -34,15 +34,21 @@
     <div class="table">
       <el-table style="width: 100%" :data="carpayList">
         <el-table-column type="index" label="序号" />
-        <el-table-column label="车牌号码" width="180" prop="carNumber" />
-        <el-table-column label="车辆状态" prop="chargeType"
+        <el-table-column label="车牌号码" width="200" prop="carNumber" />
+        <el-table-column label="车辆状态" prop="chargeType" width="200"
           ><template #default="scope">
             {{ formatStatusType(scope.row.chargeType) }}
           </template>
         </el-table-column>
-        <el-table-column label="停车总时常" width="120" prop="parkingTime" />
+        <el-table-column label="停车总时常" width="200" prop="parkingTime" />
 
-        <el-table-column label="入园时间" prop="paymentTime" />
+        <el-table-column label="入园时间" prop="paymentTime" width="200" />
+        <el-table-column label="备注" prop="remark" width="200" />
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button size="mini" type="text">查看</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <!-- 分页 -->

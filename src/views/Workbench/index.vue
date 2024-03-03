@@ -102,7 +102,7 @@ export default {
             }}</span>
           </div>
           <div class="item">
-            <span class="label">停车车辆总数（辆）</span>
+            <span class="label">园区车辆总数（辆）</span>
             <span class="value">{{
               detail.monthCardTotal ? detail.monthCardTotal : "--"
             }}</span>
